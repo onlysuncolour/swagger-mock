@@ -6,7 +6,7 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  SyncSwaggerService().then((resp:any) => {
+  SyncSwaggerService.syncSwagger().then((resp:any) => {
     res.send(resp)
     res.status(200)
   })

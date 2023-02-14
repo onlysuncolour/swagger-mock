@@ -3,20 +3,24 @@ import Head from 'next/head'
 import Layout from '@/components/layout'
 import { Button } from 'antd';
 import AppContent from '@/components/appContent';
+import PathInfoService from '@/services/info/path';
 
 export async function getStaticProps() {
+  let pathsCount = 0
+  try {
+    pathsCount = await PathInfoService.getPathCount();
+  } catch (error) {
+    // error
+  }
   return {
     props: {
+      pathsCount
     },
   };
 }
 export default function Home({
-
+  pathsCount
 }) {
-  const [updateLoading, setUpdateLoading] = useState(false)
-  const updateSwagger = () => {
-
-  }
   return (
     <Layout>
       <Head>
@@ -25,8 +29,7 @@ export default function Home({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <AppContent
-        updateSwagger={updateSwagger}
-        updateLoading={updateLoading}
+        pathsCount={pathsCount}
       ></AppContent>
     </Layout>
   )

@@ -77,6 +77,7 @@ export interface IStandardReqParam {
 
 export interface ISchema {
   ['$ref']?: string;
+  [propsName: string]: any
 }
 
 export interface IStandardRespBody {
@@ -86,5 +87,6 @@ export interface IStandardRespBody {
 }
 export interface IStandardResp {
   schema?: ISchema | any;
+  description?: string;
   [propsName: string]: any;
 }

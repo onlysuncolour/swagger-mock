@@ -82,8 +82,14 @@ export const getPathData = (path: IPathResp) => {
 };
 
 function getResponseResult(resp: IStandardRespBody) {
-  const result = {
-
+  const result:any = {}
+  const respBody = resp["200"]
+  if (respBody) {
+    result.description = respBody.description
+    const { schema } = respBody;
+    if (schema) {
+      result.schema = getDefData(schema)
+    }
   }
   return result
 }
