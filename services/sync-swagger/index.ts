@@ -1,9 +1,9 @@
 import httpGet from "../http-get"
 import { IApiResp } from "../index.interface"
 import mockConfig from '../../mock.config'
-import initDef from "../init-def";
+import initDef from "./init-def";
 import readFile from "../file/read-file";
-import initPath from "../init-path";
+import initPath from "./init-path";
 
 
 function SyncSwaggerService() {

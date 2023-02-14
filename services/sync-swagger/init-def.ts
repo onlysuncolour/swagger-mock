@@ -1,8 +1,9 @@
-import { getDefData } from "./getDefData"
 import writeFile from '../file/write-file';
+import { IDefinitionRespBody } from '../index.interface';
+import { getDefData } from './utils';
 const basePath = './data'
 
-const initDef = (definitions) => {
+const initDef = (definitions: IDefinitionRespBody) => {
   const result = {}
   Object.keys(definitions).forEach(defKey => {
     const data = definitions[defKey], 
@@ -10,7 +11,6 @@ const initDef = (definitions) => {
       type: 'object',
       description: data.title,
     };
-    defKey = defKey.split(' ').join('');
     curData.title = data.title;
     if (data.properties) {
       curData.properties = {}

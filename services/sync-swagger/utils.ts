@@ -1,4 +1,4 @@
-import { IDefinitionProperty } from "../index.interface";
+import { IDefinitionProperty, IPathResp, IStandardRespBody } from "../index.interface";
 
 const baseTypes = [
   "string", "integer", "boolean", "number"
@@ -17,7 +17,7 @@ export const getDefData = (def:IDefinitionProperty) => {
   if (!def.type) {
     if (def['$ref']) {
       return {
-        ref: def['$ref'].split('/').pop(),
+        ref: formatRefValue(def['$ref']),
         description: def.description
       }
     }
@@ -59,4 +59,35 @@ export const getDefData = (def:IDefinitionProperty) => {
       description: def.description,
     }
   }
+}
+
+
+export const getPathData = (path: IPathResp) => {
+  const result:any = {}
+  if (path.get) {
+    const getResult = {
+      responses: getResponseResult(path.get.responses),
+      summary: path.get.summary
+    }
+    result.get = getResult
+  }
+  if (path.post) {
+    const postResult = {
+      responses: getResponseResult(path.post.responses),
+      summary: path.post.summary
+    }
+    result.post = postResult
+  }
+  return result
+};
+
+function getResponseResult(resp: IStandardRespBody) {
+  const result = {
+
+  }
+  return result
+}
+
+function formatRefValue(key:string) {
+  return key.split('/').pop()
 }
