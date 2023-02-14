@@ -1,6 +1,6 @@
 import { getDefData } from "./getDefData"
 import writeFile from '../file/write-file';
-const basePath = './data/'
+const basePath = './data'
 
 const initDef = (definitions) => {
   const result = {}
