@@ -3,12 +3,12 @@ import Head from 'next/head'
 import Layout from '@/components/layout'
 import { Button } from 'antd';
 import AppContent from '@/components/appContent';
-import PathInfoService from '@/services/info/path';
+import PathService from '@/services/path';
 
 export async function getStaticProps() {
   let pathsCount = 0
   try {
-    pathsCount = await PathInfoService.getPathCount();
+    pathsCount = await PathService.getPathCount();
   } catch (error) {
     // error
   }

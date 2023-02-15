@@ -67,14 +67,16 @@ export const getPathData = (path: IPathResp) => {
   if (path.get) {
     const getResult = {
       responses: getResponseResult(path.get.responses),
-      summary: path.get.summary
+      summary: path.get.summary,
+      tags: path.get.tags,
     }
     result.get = getResult
   }
   if (path.post) {
     const postResult = {
       responses: getResponseResult(path.post.responses),
-      summary: path.post.summary
+      summary: path.post.summary,
+      tags: path.post.tags,
     }
     result.post = postResult
   }

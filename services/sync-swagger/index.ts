@@ -22,7 +22,7 @@ class SyncSwaggerService {
         const {definitions, paths} = response;
         initDef(definitions)
         initPath(paths)
-        res(response)
+        res({ok: true})
       })
     })
   }

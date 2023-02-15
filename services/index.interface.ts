@@ -53,6 +53,7 @@ export interface IPathMethodResp {
   parameters: IStandardReqParam[]
   responses: IStandardRespBody;
   summary?: string;
+  tags?: string[];
   [propsName: string]: any;
 }
 
