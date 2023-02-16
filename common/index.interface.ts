@@ -10,25 +10,25 @@ export interface IDefinitionRespBody {
 export interface IDefinitionResp {
   type: string;
   title: string;
-  additionalProperties?: IDefinitionProperty;
+  additionalProperties?: IDefinitionPropertyResp;
   properties: {
-    [propsName: string]: IDefinitionProperty;
+    [propsName: string]: IDefinitionPropertyResp;
   }
 }
 
-export interface IDefinitionProperty {
+export interface IDefinitionPropertyResp {
   description?: string;
   type: "string" | "integer" | "object" | "array" | "file" | "number" | "boolean" | undefined;
   format?: string;
   originalRef?: string;
   '$ref'?: string
   enum: string[];
-  items: IDefinitionProperty;
+  items: IDefinitionPropertyResp;
   minimum: number
   maximum: number
-  additionalProperties: IDefinitionProperty
+  additionalProperties: IDefinitionPropertyResp
   properties: {
-    [propsName: string]: IDefinitionProperty;
+    [propsName: string]: IDefinitionPropertyResp;
   }
 }
 
@@ -72,11 +72,11 @@ export interface IStandardReqParam {
   name: string; //: "request"
   required: boolean; //: true
   type?: string;
-  schema?: ISchema | any; //: {$ref: "#/definitions/OpenUserClusterSaveRequestDTO"}
+  schema?: ISchemaResp | any; //: {$ref: "#/definitions/OpenUserClusterSaveRequestDTO"}
   [propsName: string]: any;
 }
 
-export interface ISchema {
+export interface ISchemaResp {
   ['$ref']?: string;
   [propsName: string]: any
 }
@@ -87,7 +87,7 @@ export interface IStandardRespBody {
   [propsName: number]: any;
 }
 export interface IStandardResp {
-  schema?: ISchema | any;
+  schema?: ISchemaResp | any;
   description?: string;
   [propsName: string]: any;
 }
@@ -101,6 +101,22 @@ export interface IDataPath {
   post?: IDataPathMethod
 }
 
+export interface IDefinition {
+  type?: string
+  description?: string
+  title?: string
+  properties?: {
+    [propName: string]: IDefinitionProperty
+  }
+}
+export interface IDefinitionProperty {
+  
+}
+
+export interface ISchema {
+  ref?: string;
+  [propsName: string]: string | undefined;
+}
 export interface IDataPathMethod {
   responses: {
     description?: string;
