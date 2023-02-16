@@ -110,7 +110,18 @@ export interface IDefinition {
   }
 }
 export interface IDefinitionProperty {
-  
+  description?: string;
+  type: "string" | "integer" | "object" | "array" | "file" | "number" | "boolean" | undefined;
+  format?: string;
+  ref?: string
+  enum?: string[];
+  items?: IDefinitionPropertyResp;
+  minimum?: number
+  maximum?: number
+  additionalProperties?: IDefinitionPropertyResp
+  properties?: {
+    [propsName: string]: IDefinitionPropertyResp;
+  }
 }
 
 export interface ISchema {
