@@ -1,4 +1,4 @@
-import { IDefinitionProperty, IPathResp, IStandardRespBody } from "../index.interface";
+import { IDefinitionProperty, IPathResp, IStandardRespBody } from "../../common/index.interface";
 
 const baseTypes = [
   "string", "integer", "boolean", "number"

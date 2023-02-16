@@ -1,5 +1,5 @@
 import writeFile from '../file/write-file';
-import { IPathRespBody } from '../index.interface'
+import { IPathRespBody } from '../../common/index.interface'
 import { getPathData } from './utils';
 const basePath = './data'
 

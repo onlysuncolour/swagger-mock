@@ -1,6 +1,7 @@
 import react, {FC, useState, useEffect} from 'react'
 import styles from './appContent.module.less'
 import { Button } from 'antd'
+import { fetchSyncSwagger } from '@/common/request'
 type Props = {
   pathsCount?: number
 }
@@ -9,12 +10,7 @@ const AppContent:FC<Props> = ({
 }) => {
   const [updateLoading, setUpdateLoding] = useState(false)
   const updateSwagger = () => {
-    fetch('/api/sync-swagger', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    }).then(() => {
+    fetchSyncSwagger().then(() => {
       setUpdateLoding(false)
     })
   }

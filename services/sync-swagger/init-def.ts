@@ -1,5 +1,5 @@
 import writeFile from '../file/write-file';
-import { IDefinitionRespBody } from '../index.interface';
+import { IDefinitionRespBody } from '../../common/index.interface';
 import { getDefData } from './utils';
 const basePath = './data'
 

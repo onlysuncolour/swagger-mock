@@ -1,5 +1,5 @@
 import httpGet from "../http-get"
-import { IApiResp } from "../index.interface"
+import { IApiResp } from "../../common/index.interface"
 import mockConfig from '../../mock.config'
 import initDef from "./init-def";
 import readFile from "../file/read-file";
