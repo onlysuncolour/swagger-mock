@@ -162,7 +162,7 @@ export interface IMockPathMethod {
 export interface IMockPathData {
   type: 'schema' | 'json';
   param: string;
-  data: any;
+  data: string;
   uuid?: string
 }
 
