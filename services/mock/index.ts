@@ -1,17 +1,63 @@
-import { IMockFile, IMockPathMethod } from "@/common/index.interface"
+import { IMethodStandard, IMockFile, IMockPathMethod, IMockPathData } from "@/common/index.interface"
 import readFile from "../file/read-file"
 import _ from 'lodash'
 import { formatSearchToObj } from "@/common/utils"
+import writeFile from "../file/write-file"
+
+const mockFilePath = './data/mock.json'
+const mockFileReadPath = '../../data/mock.json'
 
 class MockService {
-  static async getMockDataByPath(path, method):Promise<IMockPathMethod> {
+  static async getTotalMockData():Promise<IMockFile> {
+    let mocks: IMockFile = {}
+    try {
+      const mockDatas = await (readFile(mockFileReadPath, 'json') as Promise<IMockFile>)  
+      mocks = mockDatas || {}
+    } finally {
+      return mocks
+    }
+  }
+  static async getMockDataByPath(path, method: IMethodStandard):Promise<IMockPathMethod> {
     let mocks: IMockPathMethod = {}
     try {
-      const mockDatas = await (readFile('../../data/mock.json', 'json') as Promise<IMockFile>)  
+      const mockDatas = await (readFile(mockFileReadPath, 'json') as Promise<IMockFile>)  
       mocks = mockDatas?.[path]?.[method] || {}
     } finally {
       return mocks
     }
+  }
+  static async removeMockData(path: string, method: IMethodStandard, param: string) {
+    const mocks = await this.getTotalMockData();
+    const pathMethods = mocks?.[path]?.[method]
+    if (pathMethods && pathMethods[param]) {
+      delete pathMethods[param]
+    }
+    try {
+      await writeFile(mockFilePath, mocks)
+    } catch (error) {
+      return error
+    }
+    return {ok: true}
+  }
+  static async saveMockData(path: string, method: IMethodStandard, param: string, data: IMockPathData) {
+    const mocks = await this.getTotalMockData();
+    const pathMethods = mocks?.[path]?.[method]
+    if (pathMethods && data.param !== param && pathMethods[param]) {
+      delete pathMethods[param]
+    }
+    if (!mocks[path]) {
+      mocks[path] = {}
+    }
+    if (!mocks[path]?.[method]) {
+      mocks[path][method] = {}
+    }
+    (mocks[path][method] as {})[data.param] = data
+    try {
+      await writeFile(mockFilePath, mocks)
+    } catch (err) {
+      return err
+    }
+    return {ok: true}
   }
   static async getMockData(path, method, search) {
     const mocks = await this.getMockDataByPath(path, method);
@@ -30,8 +76,7 @@ class MockService {
       }
       return false
     }) || 'default'
-    console.log(paramKey, search)
-    return JSON.parse(mocks[paramKey]?.data) || {}
+    return mocks[paramKey]?.data || {}
   }
 }
 

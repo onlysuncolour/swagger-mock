@@ -6,7 +6,7 @@ type TRequestParam = {
 }
 const request = ({
   path, method, payload, body
-}: TRequestParam) => {
+}: TRequestParam):Promise<any> => {
   return new Promise(res => {
     const url = payload ? `${path}?${new URLSearchParams(payload).toString()}` : path
     fetch(
@@ -15,7 +15,7 @@ const request = ({
         headers: {
           'Content-Type': 'application/json'
         },
-        body
+        body: body && JSON.stringify(body)
       }
     ).then(resp => {
       res(resp)
@@ -29,5 +29,28 @@ export const fetchSyncSwagger = () => {
   return request({
     path: '/api/sync-swagger',
     method: 'GET'
+  })
+}
+
+export const fetchRemoveMock = ({
+  path, method, param
+}) => {
+  return request({
+    path: '/api/mock/remove',
+    method: 'POST',
+    body: {
+      path, method, param
+    }
+  })
+}
+export const fetchSaveMock = ({
+  path, method, param, data
+}) => {
+  return request({
+    path: '/api/mock/save',
+    method: 'POST',
+    body: {
+      path, method, param, data
+    }
   })
 }

@@ -24,7 +24,7 @@ const initDef = (definitions: IDefinitionRespBody) => {
     }
     result[defKey] = curData
   })
-  writeFile(`${basePath}/definitions.json`, JSON.stringify(result))
+  writeFile(`${basePath}/definitions.json`, result)
 }
 
 export default initDef

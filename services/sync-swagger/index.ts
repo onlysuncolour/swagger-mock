@@ -23,7 +23,7 @@ class SyncSwaggerService {
         initDef(definitions)
         initPath(paths)
         res({ok: true})
-      })
+      }, err => rej(err))
     })
   }
 }

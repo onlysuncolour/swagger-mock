@@ -3,10 +3,11 @@ import PathService from "@/services/path";
 import Head from "next/head";
 import { FC, useState } from "react";
 import styles from './index.module.less'
-import { IMockPathData, IPathDetailResp } from "@/common/index.interface";
+import { IMockPathData, IPathDetailResp, ISimpleResp } from "@/common/index.interface";
 import _ from 'lodash';
-import { Button, Tag } from "antd";
+import { Button, message, Tag } from "antd";
 import MockContent from "@/components/mockContent";
+import { fetchRemoveMock, fetchSaveMock } from "@/common/request";
 type Props = {
   pathDetail: IPathDetailResp;
 }
@@ -22,9 +23,12 @@ export async function getServerSideProps({query}) {
 const MockDetail:FC<Props> = ({
   pathDetail,
 }) => {
+  console.log({
+    pathDetail
+  })
   const { path, defs } = pathDetail
   const [mocks, setMocks] = useState<IMockPathData[]>(() => {
-    const _default:IMockPathData = { param: 'default', type: 'json', data: null, uuid: _.uniqueId() }
+    const _default:IMockPathData = { param: 'default', type: 'json', data: "", uuid: _.uniqueId() }
     if (_.isEmpty(pathDetail.mocks)) {
       return [_default]
     }
@@ -38,17 +42,53 @@ const MockDetail:FC<Props> = ({
     return result
   })
   const addMock = () => {
-    const newMockData:IMockPathData = { param: '', type: 'json', data: null, uuid: _.uniqueId() }
+    const newMockData:IMockPathData = { param: '', type: 'json', data: "", uuid: _.uniqueId() }
     setMocks([...mocks, newMockData])
   }
-  const handleRemoveMock = (i) => {
+  const handleRemoveMock = (i, cb) => {
     const _mocks = _.cloneDeep(mocks)
-    _mocks.splice(i, 1)
-    setMocks(_mocks);
+    const _mock = mocks[i]
+    if (_mock.param && pathDetail.mocks?.[_mock.param]) {
+      fetchRemoveMock({
+        path: path.url,
+        method: path.method,
+        param: _mock.param
+      }).then((resp: ISimpleResp) => {
+        if (resp.ok) {
+          message.success('删除成功')
+          _mocks.splice(i, 1)
+          setMocks(_mocks);
+        }
+      }, err => {
+        message.error(err)
+        cb()
+      })
+    }
     //  api
   }
-  const handleSaveMock = (i, v) => {
+  const handleSaveMock = (i, v, cb) => {
+    const _mocks = _.cloneDeep(mocks)
+    const _mock = mocks[i]
     // api
+    fetchSaveMock({
+      path: path.url,
+      method: path.method,
+      param: _mock.param,
+      data: v
+    }).then((resp:ISimpleResp) => {
+      if (resp.ok) {
+        message.success('更新成功')
+        _mocks.splice(i, v)
+        if (_mocks.param && _mocks.param !== 'default') {
+          delete pathDetail.mocks[_mocks.param]
+        }
+        pathDetail.mocks[v.param] = _.cloneDeep(v)
+      }
+    }, err => {
+      message.error(err)
+    }).finally(() => {
+      cb()
+    })
   }
   return (
   <Layout>
@@ -70,8 +110,8 @@ const MockDetail:FC<Props> = ({
               mock={mock}
               defs={defs}
               path={path}
-              onRemoveMock={() => handleRemoveMock(i)}
-              onSaveMock = {(v) => handleSaveMock(i, v)}
+              onRemoveMock={(cb) => handleRemoveMock(i, cb)}
+              onSaveMock = {(v, cb) => handleSaveMock(i, v, cb)}
             />
           </div>
         })}

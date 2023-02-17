@@ -144,7 +144,7 @@ export interface IDataPathMethod {
 
 export interface IPath extends IDataPathMethod {
   url: string;
-  method: 'get' | 'post' | 'put';
+  method: IMethodStandard;
 }
 
 export interface IMockFile {
@@ -170,4 +170,10 @@ export interface IPathDetailResp {
   path: IPath;
   mocks: IMockPathMethod;
   defs: IDefinitionFile
+}
+
+export type IMethodStandard = 'get' | 'post'
+
+export interface ISimpleResp {
+  ok: boolean
 }

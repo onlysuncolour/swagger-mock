@@ -9,7 +9,7 @@ const initPath = (paths: IPathRespBody) => {
     const path = paths[_key]
     result[_key] = getPathData(path)
   })
-  writeFile(`${basePath}/paths.json`, JSON.stringify(result))
+  writeFile(`${basePath}/paths.json`, result)
 }
 
 export default initPath

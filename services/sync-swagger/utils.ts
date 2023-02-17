@@ -1,4 +1,4 @@
-import { IDefinitionProperty, IPathResp, IStandardRespBody } from "../../common/index.interface";
+import { IDefinitionPropertyResp, IPathResp, IStandardRespBody } from "../../common/index.interface";
 
 const baseTypes = [
   "string", "integer", "boolean", "number"
@@ -8,7 +8,7 @@ const multiTypes = [
   "object", "array", "file"
 ]
 
-export const getDefData = (def:IDefinitionProperty) => {
+export const getDefData = (def:IDefinitionPropertyResp) => {
   if (baseTypes.includes(def.type as string)) {
     return {
       ...def

@@ -6,7 +6,7 @@
 .pnp.js
 
 # data
-/data
+/data/*.json
 # config
 mock.config.ts
 
