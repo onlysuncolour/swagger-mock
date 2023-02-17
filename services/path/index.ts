@@ -1,5 +1,6 @@
-import { IDataPathFile, IPath } from "@/common/index.interface"
+import { IDataPathFile, IDataPathMethod, IDefinitionFile, IMockFile, IMockPathMethod, IPath, IPathDetailResp } from "@/common/index.interface"
 import readFile from "../file/read-file"
+import { getDefResult } from '../utils';
 
 class PathService {
   static getPathCount():Promise<number> {
@@ -35,14 +36,36 @@ class PathService {
       }, err => rej(err))
     })
   }
-  static getPathDetail(url: string, method: string): Promise<any> {
+  static getPathDetail(url: string, method: 'get' | 'post'): Promise<IPathDetailResp> {
+    if (!url || !method) {
+      return Promise.reject('参数不合法')
+    }
     return new Promise((res, rej) => {
       Promise.all([
-        readFile('../../data/paths.json', 'json'),
-        readFile('../../data/mock.json', 'json'),
-        readFile('../../data/definitions.json', 'json')
+        readFile('../../data/paths.json', 'json') as Promise<IDataPathFile>,
+        readFile('../../data/mock.json', 'json') as Promise<IMockFile>,
+        readFile('../../data/definitions.json', 'json') as Promise<IDefinitionFile>
       ]).then(([paths, mockDatas, definitions]) => {
-        
+        const pathData = paths?.[url]?.[method];
+        if (!pathData) {
+          rej('未找到相应接口')
+        }
+        const path: IPath = {
+          url: url,
+          method: method,
+          ...(pathData as IDataPathMethod),
+        }
+        const mocks: IMockPathMethod = mockDatas?.[url]?.[method] || {}
+        const defs:IDefinitionFile = {}
+        if (pathData?.responses?.schema?.ref && definitions[pathData?.responses?.schema?.ref]) {
+          defs[pathData?.responses?.schema?.ref] = definitions[pathData?.responses?.schema?.ref];
+          getDefResult(definitions[pathData?.responses?.schema?.ref], defs, definitions)
+        }
+        res({
+          path,
+          mocks,
+          defs,
+        })
       }, err => {
         rej(err)
       })

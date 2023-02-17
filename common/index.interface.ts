@@ -101,6 +101,10 @@ export interface IDataPath {
   post?: IDataPathMethod
 }
 
+export interface IDefinitionFile {
+  [definition: string]: IDefinition;
+}
+
 export interface IDefinition {
   type?: string
   description?: string
@@ -115,23 +119,24 @@ export interface IDefinitionProperty {
   format?: string;
   ref?: string
   enum?: string[];
-  items?: IDefinitionPropertyResp;
+  children?: IDefinitionProperty;
   minimum?: number
   maximum?: number
-  additionalProperties?: IDefinitionPropertyResp
+  unstableProperties?: IDefinitionProperty
   properties?: {
-    [propsName: string]: IDefinitionPropertyResp;
+    [propsName: string]: IDefinitionProperty;
   }
 }
 
 export interface ISchema {
   ref?: string;
+  type?: string;
   [propsName: string]: string | undefined;
 }
 export interface IDataPathMethod {
   responses: {
     description?: string;
-    schema?: any
+    schema?: IDefinitionProperty
   }
   summary?: string
   tags?: string[]
@@ -140,4 +145,27 @@ export interface IDataPathMethod {
 export interface IPath extends IDataPathMethod {
   url: string;
   method: 'get' | 'post' | 'put';
+}
+
+export interface IMockFile {
+  [path:string]: IMockPathDatas
+}
+
+export interface IMockPathDatas {
+  get?: IMockPathMethod;
+  post?: IMockPathMethod;
+}
+
+export interface IMockPathMethod {
+  [param: string]: IMockPathData
+}
+export interface IMockPathData {
+  type: 'schema' | 'json';
+  data: any;
+}
+
+export interface IPathDetailResp {
+  path: IPath;
+  mocks: IMockPathMethod;
+  defs: IDefinitionFile
 }

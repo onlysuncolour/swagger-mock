@@ -3,19 +3,25 @@ import PathService from "@/services/path";
 import Head from "next/head";
 import { FC } from "react";
 import styles from './index.module.less'
+import { IPathDetailResp } from "@/common/index.interface";
 type Props = {
-  pathDetail: any;
+  pathDetail: IPathDetailResp;
 }
 export async function getServerSideProps({query}) {
   const {path, method} = query;
-  const pathDetail = PathService.getPathDetail(path, method)
+  const pathDetail = await PathService.getPathDetail(path, method)
   return {
-    pathDetail
+    props: {
+      pathDetail
+    }
   }
 }
 const MockDetail:FC<Props> = ({
   pathDetail,
 }) => {
+  console.log({
+    pathDetail
+  })
   return (
   <Layout>
     <Head>
