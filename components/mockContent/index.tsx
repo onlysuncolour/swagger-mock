@@ -1,8 +1,9 @@
 import { IDefinitionFile, IDefinitionProperty, IMockPathData, IPath } from "@/common/index.interface"
-import { FC, useState } from "react"
+import { FC, useRef, useState } from "react"
 import styles from './index.module.less'
 import { Button, Input, message, Radio, Switch } from "antd";
 import { formatSearchToObj } from "@/common/utils";
+import SchemaEditor from "../schemaEditor";
 
 const {TextArea} = Input
 type Prop = {
@@ -30,15 +31,13 @@ const MockContent:FC<Prop> = ({
   const [show, setShow] = useState(() => param === 'default')
   const [rmLoading, setRmLoading] = useState(false)
   const [saveLoading, setSaveLoading] = useState(false)
+
+  const schemaRef = useRef<any>()
   const saveCb = () => {
     setSaveLoading(false)
   }
   const handleSave = () => {
     let mockData = ''
-    if (type !== 'json') {
-      message.error('暂时仅支持json')
-      return
-    }
     try {
       if (param !== 'default') {
         formatSearchToObj(param)
@@ -50,6 +49,8 @@ const MockContent:FC<Prop> = ({
     try {
       if (type === 'json') {
         mockData = JSON.parse(jsonData)
+      } else {
+        mockData = schemaRef.current.getResult()
       }
     } catch (error) {
       message.error('JSON数据不合法')
@@ -91,7 +92,7 @@ const MockContent:FC<Prop> = ({
         }
         {
           type === 'schema' && <div>
-            
+            <SchemaEditor data={data} prop={def} ref={schemaRef}></SchemaEditor>
           </div>
         }
       </div>
