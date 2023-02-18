@@ -1,4 +1,4 @@
-import { IDefinitionFile, IMockPathData, IPath } from "@/common/index.interface"
+import { IDefinitionFile, IDefinitionProperty, IMockPathData, IPath } from "@/common/index.interface"
 import { FC, useState } from "react"
 import styles from './index.module.less'
 import { Button, Input, message, Radio, Switch } from "antd";
@@ -7,7 +7,7 @@ import { formatSearchToObj } from "@/common/utils";
 const {TextArea} = Input
 type Prop = {
   mock: IMockPathData;
-  defs: IDefinitionFile;
+  def: IDefinitionProperty;
   path: IPath
   onRemoveMock: (cb: any) => void
   onSaveMock: (v, cb: any) => void
@@ -18,7 +18,7 @@ const options = [
 ];
 const MockContent:FC<Prop> = ({
   mock,
-  defs,
+  def,
   path,
   onRemoveMock,
   onSaveMock,
@@ -88,6 +88,11 @@ const MockContent:FC<Prop> = ({
       show && <div className={styles.content}>
         {
           type === 'json' && <TextArea value={jsonData} onChange={e => setJsonData(e.target.value)} />
+        }
+        {
+          type === 'schema' && <div>
+            
+          </div>
         }
       </div>
     }

@@ -1,7 +1,7 @@
-import { IDataPathFile, IDataPathMethod, IDefinitionFile, IMethodStandard, IMockFile, IMockPathMethod, IPath, IPathDetailResp } from "@/common/index.interface"
+import { IDataPathFile, IDataPathMethod, IDefinitionFile, IDefinitionProperty, IMethodStandard, IMockFile, IMockPathMethod, IPath, IPathDetailResp } from "@/common/index.interface"
 import readFile from "../file/read-file"
 import MockService from "../mock";
-import { getDefResult } from '../utils';
+import { getDefChain } from '../utils';
 
 class PathService {
   static getPathCount():Promise<number> {
@@ -56,15 +56,16 @@ class PathService {
           method: method,
           ...(pathData as IDataPathMethod),
         }
-        const defs:IDefinitionFile = {}
+        let def:IDefinitionProperty = {}
         if (pathData?.responses?.schema?.ref && definitions[pathData?.responses?.schema?.ref]) {
-          defs[pathData?.responses?.schema?.ref] = definitions[pathData?.responses?.schema?.ref];
-          getDefResult(definitions[pathData?.responses?.schema?.ref], defs, definitions)
+          def = getDefChain(pathData?.responses?.schema?.ref, definitions)
+        } else if (pathData?.responses?.schema) {
+          def = pathData?.responses?.schema
         }
         res({
           path,
           mocks,
-          defs,
+          def,
         })
       }, err => {
         rej(err)

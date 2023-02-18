@@ -23,10 +23,7 @@ export async function getServerSideProps({query}) {
 const MockDetail:FC<Props> = ({
   pathDetail,
 }) => {
-  console.log({
-    pathDetail
-  })
-  const { path, defs } = pathDetail
+  const { path, def } = pathDetail
   const [mocks, setMocks] = useState<IMockPathData[]>(() => {
     const _default:IMockPathData = { param: 'default', type: 'json', data: "", uuid: _.uniqueId() }
     if (_.isEmpty(pathDetail.mocks)) {
@@ -108,7 +105,7 @@ const MockDetail:FC<Props> = ({
           return <div key={mock.uuid}>
             <MockContent
               mock={mock}
-              defs={defs}
+              def={def}
               path={path}
               onRemoveMock={(cb) => handleRemoveMock(i, cb)}
               onSaveMock = {(v, cb) => handleSaveMock(i, v, cb)}

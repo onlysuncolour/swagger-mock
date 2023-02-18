@@ -1,3 +1,5 @@
+import { rejects } from "assert";
+
 type TRequestParam = {
   path: string;
   method: 'GET' | 'POST',
@@ -7,7 +9,7 @@ type TRequestParam = {
 const request = ({
   path, method, payload, body
 }: TRequestParam):Promise<any> => {
-  return new Promise(res => {
+  return new Promise((res, rej) => {
     const url = payload ? `${path}?${new URLSearchParams(payload).toString()}` : path
     fetch(
       url, {
@@ -20,7 +22,7 @@ const request = ({
     ).then(resp => {
       res(resp)
     }, err => {
-      console.log({err})
+      rej(err)
     })
   })
 }

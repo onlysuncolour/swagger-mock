@@ -7,11 +7,8 @@ export default function handler(
   res: NextApiResponse
 ) {
   const {
-    url, method : reqMethod, query, body
+    method : reqMethod, body
   } = req
-  console.log({
-    reqMethod, body
-  })
   if (reqMethod === 'POST') {
     const {
       path,

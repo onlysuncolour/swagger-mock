@@ -106,18 +106,18 @@ export interface IDefinitionFile {
 }
 
 export interface IDefinition {
-  type?: string
+  type?: "string" | "integer" | "object" | "array" | "file" | "number" | "boolean" | undefined;
   description?: string
-  title?: string
   properties?: {
     [propName: string]: IDefinitionProperty
   }
 }
 export interface IDefinitionProperty {
   description?: string;
-  type: "string" | "integer" | "object" | "array" | "file" | "number" | "boolean" | undefined;
+  type?: "string" | "integer" | "object" | "array" | "file" | "number" | "boolean" | undefined;
   format?: string;
-  ref?: string
+  ref?: string;
+  refDescription?: string;
   enum?: string[];
   children?: IDefinitionProperty;
   minimum?: number
@@ -169,7 +169,7 @@ export interface IMockPathData {
 export interface IPathDetailResp {
   path: IPath;
   mocks: IMockPathMethod;
-  defs: IDefinitionFile
+  def: IDefinitionProperty
 }
 
 export type IMethodStandard = 'get' | 'post'

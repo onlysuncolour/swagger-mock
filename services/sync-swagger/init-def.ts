@@ -11,7 +11,6 @@ const initDef = (definitions: IDefinitionRespBody) => {
       type: 'object',
       description: data.title,
     };
-    curData.title = data.title;
     if (data.properties) {
       curData.properties = {}
       Object.keys(data.properties || {}).forEach(propKey => {

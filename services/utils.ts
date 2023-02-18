@@ -1,40 +1,41 @@
-import { IDefinition, IDefinitionFile, IDefinitionProperty } from '@/common/index.interface';
+import { IDefinitionFile, IDefinitionProperty } from '@/common/index.interface';
 
-const getDefChain = (ref: string, result: IDefinitionFile, allDefs: IDefinitionFile) => {
-  if (!result[ref] && allDefs[ref]) {
-    result[ref] = allDefs[ref]
-    getDefResult(allDefs[ref], result, allDefs);
-    return
+export const getPropDefChain = (prop: IDefinitionProperty, allDefs: IDefinitionFile):IDefinitionProperty => {
+  if (prop.ref) {
+    const def = allDefs[prop.ref]
+    return {
+      ...getDefChain(prop.ref, allDefs),
+      ...prop,
+      refDescription: def?.description
+    }
+  } else if (prop.children) {
+    return {
+      ...prop,
+      children: getPropDefChain(prop.children, allDefs)
+    }
+  } else if (prop.unstableProperties) {
+    return {
+      ...prop,
+      unstableProperties: getPropDefChain(prop.unstableProperties, allDefs)
+    }
+  } else {
+    return prop
   }
 }
 
-const getPropDefChain = (property: IDefinitionProperty, result: IDefinitionFile, allDefs: IDefinitionFile) => {
-  if (property.ref) {
-    getDefChain(property.ref, result, allDefs)
-  } else if (property.children) {
-    getPropDefChain(property.children, result, allDefs)
-  } else if (property.unstableProperties) {
-    getPropDefChain(property.unstableProperties, result, allDefs)
-  } else if (property.properties) {
-    Object.keys(property.properties).forEach(k => {
-      if (!property.properties) {
-        return
+export const getDefChain = (ref: string, allDefs: IDefinitionFile):IDefinitionProperty => {
+  const def = allDefs[ref];
+  if (!def) {
+    return {}
+  }
+  const result = {...def}
+  if (result.properties) {
+    Object.keys(result.properties).forEach(propKey => {
+      if (result?.properties?.[propKey]) {
+        const prop = result.properties[propKey]
+        result.properties[propKey] = getPropDefChain(prop, allDefs)
       }
-      const prop = property?.properties[k];
-      return getPropDefChain(prop, result, allDefs)
     })
   }
-}
-
-export const getDefResult = (schema:IDefinition, result: IDefinitionFile, allDefs: IDefinitionFile) => {
-  if (!schema || !schema.properties) {
-    return
-  }
-  Object.keys(schema.properties).forEach(k => {
-    if (!schema.properties) {
-      return
-    }
-    const prop = schema?.properties[k];
-    return getPropDefChain(prop, result, allDefs)
-  })
+  return result
 }

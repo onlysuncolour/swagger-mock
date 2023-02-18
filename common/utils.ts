@@ -6,7 +6,6 @@ export const formatSearchToObj = (search: string):any => {
 }
 
 export const commonErrHandle = (res, err) => {
-  console.log('err')
   res.send(err)
   res.status(500)
 }
