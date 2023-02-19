@@ -4,6 +4,8 @@ import _ from "lodash";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import styles from './index.module.less'
 import SchemaEditor from ".";
+import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import TooltipButton from "../base/tooltipButton";
 type Props = {
   data: any[];
   prop: IDefinitionProperty
@@ -53,11 +55,23 @@ const ArrayEditor = React.forwardRef((props: Props, ref: any) => {
   
   return <div className={styles.arrayRoot}>
     {
-      rendered && <Form initialValues={{array: values}}>
+      rendered && <Form initialValues={{array: values}} labelAlign="left">
         <Form.List name="array">
           {(fields, { add, remove }) => (
             <>{fields.map(({ key, name, ...restField }, index, arr) => (
-              <Space key={key} style={{display: 'flex'}} align="baseline">
+              <Space key={key} className={styles.arrayItem} align="baseline">
+                <TooltipButton
+                  tooltip="移除 array item"
+                  className={styles.commonRmBtn}
+                  onClick={() => {
+                    rmProp(index)
+                    remove(index)
+                  }}
+                  size="small"
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                />
                 <Form.Item {...restField}>
                   <SchemaEditor
                     data={values[index].value}
@@ -65,19 +79,10 @@ const ArrayEditor = React.forwardRef((props: Props, ref: any) => {
                     prop={prop.children as IDefinitionProperty}
                   />
                 </Form.Item>
-                <Button
-                  className={styles.commonRmBtn}
-                  onClick={() => {
-                    rmProp(index)
-                    remove(index)
-                  }}
-                >
-                  移除
-                </Button>
               </Space>
             ))}
             <Form.Item>
-              <Button
+              <TooltipButton
                 size="small"
                 onClick={() => {
                   const uuid = _.uniqueId()
@@ -87,10 +92,11 @@ const ArrayEditor = React.forwardRef((props: Props, ref: any) => {
                     uuid
                   })
                 }}
+                type="text"
+                tooltip="add array item"
+                icon={<PlusCircleOutlined />}
                 className={styles.commonAddBtn}
-              >
-                add
-              </Button>
+              />
             </Form.Item>
             </>
           )}
@@ -98,17 +104,6 @@ const ArrayEditor = React.forwardRef((props: Props, ref: any) => {
         </Form.List>
       </Form>
     }
-    {/* <div className={styles.arrayContent}>
-      {values.map((v, i) => <div key={v.uuid} className={styles.arrayItem}>
-        <div className={styles.arrayItemValue}>
-          <SchemaEditor data={v.value} ref={propRef.current[v.uuid]} prop={prop.children as IDefinitionProperty}></SchemaEditor>
-        </div>
-        <Button className={styles.commonRmBtn} onClick={() => rmProp(i)}>移除</Button>
-      </div>
-      )}
-    </div>
-    <Button className={styles.commonAddBtn} size="small" onClick={addProp}>add</Button> */}
-
   </div>
 })
 

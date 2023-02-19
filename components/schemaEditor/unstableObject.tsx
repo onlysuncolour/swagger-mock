@@ -1,8 +1,9 @@
 import { IDefinitionProperty, IUuidRef, TUuid } from "@/common/index.interface";
-import { Button, Form, Input, message, Space } from "antd";
+import { Button, Form, Input, message, Space, Tag } from "antd";
 import _ from 'lodash'
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import SchemaEditor from ".";
+import TypeTag from "../base/typeTag";
 import styles from './index.module.less'
 type Props = {
   data: any;
@@ -70,69 +71,61 @@ const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
   }
   return <div className={styles.unstableObjectRoot}>
     {
-      rendered && <Form initialValues={{unstableObject: values}}>
-      <Form.List name="unstableObject">
-        {(fields, { add, remove }) => (
-          <>{fields.map(({ key, name, ...restField }, index, arr) => (
-            <Space key={key} style={{display: 'flex'}} align="baseline">
-              <Form.Item name={[name, 'key']} {...restField}>
-                <Input onChange={(e) => onChangePropName(index, e.target.value)}></Input>
+      rendered && <Form labelAlign="left" initialValues={{unstableObject: values}} className={styles.unstableObjectForm}>
+        <div className={styles.unstableObjectTip}>
+          <TypeTag type="object" />
+        </div>
+        <div>
+          <Form.List name="unstableObject">
+            {(fields, { add, remove }) => (
+              <>{fields.map(({ key, name, ...restField }, index, arr) => (
+                <Space key={key} style={{display: 'flex'}} align="baseline">
+                  <Form.Item name={[name, 'key']} {...restField}>
+                    <Input onChange={(e) => onChangePropName(index, e.target.value)}></Input>
+                  </Form.Item>
+                  {": "}
+                  <Form.Item {...restField}>
+                    <SchemaEditor
+                      data={values[index].value}
+                      ref={propRef.current[values[index].uuid]}
+                      prop={prop.unstableProperties as IDefinitionProperty}
+                    />
+                  </Form.Item>
+                  <Button
+                    className={styles.commonRmBtn}
+                    onClick={() => {
+                      rmProp(index)
+                      remove(index)
+                    }}
+                  >
+                    移除
+                  </Button>
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    const uuid = _.uniqueId()
+                    addProp(uuid)
+                    add({
+                      key: '',
+                      value: null,
+                      uuid
+                    })
+                  }}
+                  className={styles.commonAddBtn}
+                >
+                  add
+                </Button>
               </Form.Item>
-              {": "}
-              <Form.Item {...restField}>
-                <SchemaEditor
-                  data={values[index].value}
-                  ref={propRef.current[values[index].uuid]}
-                  prop={prop.unstableProperties as IDefinitionProperty}
-                />
-              </Form.Item>
-              <Button
-                className={styles.commonRmBtn}
-                onClick={() => {
-                  rmProp(index)
-                  remove(index)
-                }}
-              >
-                移除
-              </Button>
-            </Space>
-          ))}
-          <Form.Item>
-            <Button
-              size="small"
-              onClick={() => {
-                const uuid = _.uniqueId()
-                addProp(uuid)
-                add({
-                  key: '',
-                  value: null,
-                  uuid
-                })
-              }}
-              className={styles.commonAddBtn}
-            >
-              add
-            </Button>
-          </Form.Item>
-          </>
-        )}
+              </>
+            )}
 
-      </Form.List>
-    </Form>
+          </Form.List>
+        </div>
+      </Form>
     }
-    
-    {/* <div className={styles.unstableObjectContent}>
-      {
-        values.map((v, i) => <div key={v[2]} className={styles.unstableObjectProp}>
-          <Input className={styles.unstableObjectPropKey} value={v[0]} onChange={e => onChangePropName(i, e.target.value)} />
-          <div className={styles.unstableObjectPropValue}>
-            <SchemaEditor data={v[1]} ref={propRef.current[i]} prop={prop.unstableProperties as IDefinitionProperty}></SchemaEditor>
-          </div>
-          <Button className={styles.commonRmBtn} onClick={() => rmProp(i)}>移除</Button>
-        </div>)
-      }
-    </div> */}
-    {/* <Button size="small" onClick={addProp} className={styles.commonAddBtn}>add</Button> */}
   </div>
 })
 

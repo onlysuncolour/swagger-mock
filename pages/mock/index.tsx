@@ -30,8 +30,8 @@ const Mock:FC<Props> = ({
   pathsCount,
   pathList
 }) => {
-  const tags:string[] = useMemo(() => {
-    return _.uniq(pathList.flatMap(pathData => (_.isEmpty(pathData.tags) ? ['_undefined'] : pathData.tags))).sort()
+  const tags = useMemo<string[]>(() => {
+    return _.uniq(pathList.flatMap(pathData => (_.isEmpty(pathData.tags) ? ['_undefined'] : (pathData.tags as string[])))).sort()
   }, [pathList])
   const tagGroups = useMemo(() => {
     const result: {[name:string]: IPath[]} = {'_undefined': []};
