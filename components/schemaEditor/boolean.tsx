@@ -1,6 +1,6 @@
 import { IDefinitionProperty } from "@/common/index.interface";
-import { Radio } from "antd";
-import React, { FC, useImperativeHandle, useRef, useState } from "react";
+import { Form, Radio } from "antd";
+import React, { useImperativeHandle, useState } from "react";
 type Props = {
   data: boolean;
   prop: IDefinitionProperty
@@ -18,9 +18,9 @@ const BooleanEditor = React.forwardRef((props: Props, ref: any) => {
   useImperativeHandle(ref, () => ({
     getResult
   }));
-  return <div>
-      <Radio.Group options={options} size="small" onChange={e => setValue(e.target.value)} value={value} optionType="button" />
-  </div>
+  return <Form.Item>
+    <Radio.Group options={options} size="small" onChange={e => setValue(e.target.value)} value={value} optionType="button" />
+  </Form.Item>
 })
 
 export default BooleanEditor

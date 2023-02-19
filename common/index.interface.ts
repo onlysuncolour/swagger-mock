@@ -177,3 +177,17 @@ export type IMethodStandard = 'get' | 'post'
 export interface ISimpleResp {
   ok: boolean
 }
+
+export interface IEditorRefCurrent {
+  getResult: () => any
+}
+
+export type TEditorRefCurrent = null | IEditorRefCurrent
+
+export interface IUuidRef {
+  [uuid: TUuid]: {
+    current: TEditorRefCurrent
+  }
+}
+
+export type TUuid = string

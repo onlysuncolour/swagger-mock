@@ -91,7 +91,7 @@ const MockContent:FC<Prop> = ({
           type === 'json' && <TextArea value={jsonData} onChange={e => setJsonData(e.target.value)} />
         }
         {
-          type === 'schema' && <div>
+          type === 'schema' && <div className={styles.schema}>
             <SchemaEditor data={data} prop={def} ref={schemaRef}></SchemaEditor>
           </div>
         }

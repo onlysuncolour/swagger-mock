@@ -1,21 +1,28 @@
-import { IDefinitionProperty } from "@/common/index.interface";
-import { Button, Input, message } from "antd";
+import { IDefinitionProperty, IUuidRef, TUuid } from "@/common/index.interface";
+import { Button, Form, Input, message, Space } from "antd";
 import _ from 'lodash'
-import React, { FC, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import SchemaEditor from ".";
+import styles from './index.module.less'
 type Props = {
   data: any;
   prop: IDefinitionProperty
 }
-type TValue = [string, any, string]
+type TValue = {
+  key: string;
+  value: any;
+  uuid: TUuid
+}
 const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
   const {data, prop} = props
+  const [rendered, setRendered] = useState(false)
   const [values, setValues] = useState<TValue[]>([])
-  const propRef = useRef<any>({});
+  const propRef = useRef<IUuidRef>({});
   useEffect(() => {
     if (data) {
       try {
-        const _values:TValue[] = Object.entries(data).map(v => [...v, _.uniqueId()])
+        // const _values:TValue[] = Object.entries(data).map(v => [...v, _.uniqueId()])
+        const _values:TValue[] = Object.entries(data).map(v => ({key: v[0], value: v[1], uuid: _.uniqueId()}))
         if (_values.length > 0) {
           setValues(_values)
           _values.map(v => v[2]).forEach((uuid) => {
@@ -24,16 +31,17 @@ const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
         }
       } catch (error) {}
     }
+    setRendered(true)
   }, [])
   const getResult = () => {
     const result:any = {}
     let flag = true
     values.forEach((v, i) => {
-      const key = v[0]
+      const key = v.key
       if (result[key]) {
         flag = false
       } else {
-        result[key] = propRef.current[v[2]].current.getResult()
+        result[key] = propRef.current[v.uuid].current?.getResult()
       }
     })
     if ((flag as boolean) === false) {
@@ -45,34 +53,86 @@ const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
   useImperativeHandle(ref, () => ({
     getResult
   }));
-  const addProp = () => {
-    const uuid =  _.uniqueId()
-    const _values:TValue[] = [...values, ['', null, uuid]]
+  const addProp = (uuid) => {
+    const _values:TValue[] = [...values, {key: '', value: null, uuid}]
     propRef.current[uuid] = {current: null}
     setValues(_values)
   }
   const rmProp = (i) => {
     const _values = _.cloneDeep(values)
     _values.splice(i, 1)
-    propRef.current.splice(i, 1)
     setValues(_values)
   }
   const onChangePropName = (i, v) => {
     const _values = _.cloneDeep(values)
-    _values[i][0] = v
+    _values[i].key = v
     setValues(_values)
   }
-  return <div>
-    <div>
+  return <div className={styles.unstableObjectRoot}>
+    {
+      rendered && <Form initialValues={{unstableObject: values}}>
+      <Form.List name="unstableObject">
+        {(fields, { add, remove }) => (
+          <>{fields.map(({ key, name, ...restField }, index, arr) => (
+            <Space key={key} style={{display: 'flex'}} align="baseline">
+              <Form.Item name={[name, 'key']} {...restField}>
+                <Input onChange={(e) => onChangePropName(index, e.target.value)}></Input>
+              </Form.Item>
+              {": "}
+              <Form.Item {...restField}>
+                <SchemaEditor
+                  data={values[index].value}
+                  ref={propRef.current[values[index].uuid]}
+                  prop={prop.unstableProperties as IDefinitionProperty}
+                />
+              </Form.Item>
+              <Button
+                className={styles.commonRmBtn}
+                onClick={() => {
+                  rmProp(index)
+                  remove(index)
+                }}
+              >
+                移除
+              </Button>
+            </Space>
+          ))}
+          <Form.Item>
+            <Button
+              size="small"
+              onClick={() => {
+                const uuid = _.uniqueId()
+                addProp(uuid)
+                add({
+                  key: '',
+                  value: null,
+                  uuid
+                })
+              }}
+              className={styles.commonAddBtn}
+            >
+              add
+            </Button>
+          </Form.Item>
+          </>
+        )}
+
+      </Form.List>
+    </Form>
+    }
+    
+    {/* <div className={styles.unstableObjectContent}>
       {
-        values.map((v, i) => <div key={v[2]}>
-          <Input value={v[0]} onChange={e => onChangePropName(i, e.target.value)} />
-          <SchemaEditor data={v[1]} ref={propRef.current[i]} prop={prop.unstableProperties as IDefinitionProperty}></SchemaEditor>
-          <Button onClick={() => rmProp(i)}>移除</Button>
+        values.map((v, i) => <div key={v[2]} className={styles.unstableObjectProp}>
+          <Input className={styles.unstableObjectPropKey} value={v[0]} onChange={e => onChangePropName(i, e.target.value)} />
+          <div className={styles.unstableObjectPropValue}>
+            <SchemaEditor data={v[1]} ref={propRef.current[i]} prop={prop.unstableProperties as IDefinitionProperty}></SchemaEditor>
+          </div>
+          <Button className={styles.commonRmBtn} onClick={() => rmProp(i)}>移除</Button>
         </div>)
       }
-    </div>
-    <Button size="small" onClick={addProp}>add</Button>
+    </div> */}
+    {/* <Button size="small" onClick={addProp} className={styles.commonAddBtn}>add</Button> */}
   </div>
 })
 
