@@ -22,11 +22,10 @@ const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
   useEffect(() => {
     if (data) {
       try {
-        // const _values:TValue[] = Object.entries(data).map(v => [...v, _.uniqueId()])
         const _values:TValue[] = Object.entries(data).map(v => ({key: v[0], value: v[1], uuid: _.uniqueId()}))
         if (_values.length > 0) {
           setValues(_values)
-          _values.map(v => v[2]).forEach((uuid) => {
+          _values.forEach(({uuid}) => {
             propRef.current[uuid] = {current: null}
           })
         }
@@ -39,14 +38,14 @@ const UnstableObjecEditor = React.forwardRef((props: Props, ref: any) => {
     let flag = true
     values.forEach((v, i) => {
       const key = v.key
-      if (result[key]) {
+      if (!key || result[key]) {
         flag = false
       } else {
         result[key] = propRef.current[v.uuid].current?.getResult()
       }
     })
     if ((flag as boolean) === false) {
-      message.error('不能有同名属性！')
+      message.error('不能有同名属性或空属性名！')
       throw('error')
     }
     return result
